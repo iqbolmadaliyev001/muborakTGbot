@@ -17,13 +17,13 @@ if not BOT_TOKEN:
         "Uni deploy platformasi sozlamalarida yoki .env faylida o'rnating."
     )
 
-if not GROUP_ID_RAW:
+if not GROUP_ID:
     raise RuntimeError(
         "GROUP_ID muhit o'zgaruvchisi topilmadi. "
         "Uni deploy platformasi sozlamalarida yoki .env faylida o'rnating."
     )
 
-GROUP_ID = int(GROUP_ID_RAW)
+GROUP_ID = int(GROUP_ID)
 
 
 bot = Bot(token=BOT_TOKEN)
