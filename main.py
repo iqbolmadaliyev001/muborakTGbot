@@ -8,10 +8,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 
-load_dotenv()
-
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-GROUP_ID = os.getenv("GROUP_ID")
+BOT_TOKEN = "8628561301:AAFMRqqlVSp79VvkjfHZHposW1KhXtN7lKc"
+GROUP_ID = -1004341899134
 
 if not BOT_TOKEN:
     raise RuntimeError(
