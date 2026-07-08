@@ -8,7 +8,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 
-BOT_TOKEN = "8628561301:AAFMRqqlVSp79VvkjfHZHposW1KhXtN7lKc"
+BOT_TOKEN = "8896346570:AAHOTEC4islsKOnAQcgO15F-LXRyhaOd92A"
 GROUP_ID = -1004341899134
 
 if not BOT_TOKEN:
