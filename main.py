@@ -28,7 +28,7 @@ log = logging.getLogger("muborak_bot")
 # --------------------------------------------------------------------------
 # Sozlamalar — bot tokeni va guruh ID'si shu yerda, to'g'ridan-to'g'ri yoziladi
 # --------------------------------------------------------------------------
-BOT_TOKEN = "8896346570:AAHOTEC4islsKOnAQcgO15F-LXRyhaOd92A"
+BOT_TOKEN = "8896346570:AAGOFPTPVfsRPi3T6aZFBefBVHktEigVDw4"
 GROUP_ID = -1004341899134
 
 if not BOT_TOKEN:
