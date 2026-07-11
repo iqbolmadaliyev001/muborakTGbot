@@ -1,67 +1,34 @@
-# SUSAMBIL — Ish uchun anketa Telegram boti
+# MuborakTGbot — SUSAMBIL anketa boti
 
-"SUSAMBIL" jamoasiga qo'shilish uchun 15 ta savoldan iborat anketani qabul qiladigan
-va yakunda javoblarni surat bilan birga belgilangan guruhga yuboradigan Telegram bot.
+## O'rnatish
 
-## Ishlash tartibi
+1. Kerakli kutubxonalarni o'rnating:
+   ```
+   pip install -r requirements.txt
+   ```
 
-1. Foydalanuvchi `/start` yuboradi — botga xush kelibsiz matni va **"Boshladik"** tugmasi chiqadi.
-2. "Boshladik" bosilgach, bot ketma-ket 15 ta savol beradi:
-   - Familiya-ism, yosh, manzil, soxa, tajriba, ish vaqti, transport, maosh,
-     oilaviy holat, farzandlar soni, dam olish kuni, maktab, hozirgi/oldingi ish joyi, surat.
-3. Surat yuborilgach, **"✅ Yuborish"** tugmasi chiqadi.
-4. Tugma bosilgach, barcha javoblar surat bilan birga `GROUP_ID` guruhiga yuboriladi.
+2. `main.py` faylini oching va yuqori qismidagi quyidagi qatorlarni o'zingizning ma'lumotlaringiz bilan to'ldiring:
+   ```python
+   BOT_TOKEN = "sizning-bot-tokeningiz"
+   GROUP_ID = -100xxxxxxxxxx
+   ```
 
-## O'rnatish (lokal kompyuterda)
+   **GROUP_ID'ni qanday topish mumkin:**
+   - Botni guruhga qo'shing (u yerda a'zo bo'lishi shart).
+   - Guruhda istalgan xabar yozing.
+   - Botni ishga tushiring (`py main.py`) — terminalda quyidagicha qator chiqadi:
+     ```
+     [INFO] Guruhdan xabar keldi -> chat_id=-1001234567890, turi=supergroup, nomi=...
+     ```
+   - Shu `chat_id` qiymatini `main.py` ichidagi `GROUP_ID`ga yozing.
 
-```bash
-git clone <yangi_repo_manzili>
-cd muborakTGbot
+3. Botni ishga tushiring:
+   ```
+   py main.py
+   ```
 
-python3 -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
+## Muhim eslatmalar
 
-pip install -r requirements.txt
-```
-
-## Sozlash
-
-`.env.example` faylidan nusxa oling va `.env` deb nomlang:
-
-```bash
-cp .env.example .env
-```
-
-`.env` faylini oching va o'z ma'lumotlaringizni kiriting:
-
-```
-BOT_TOKEN=sizning_bot_tokeningiz
-GROUP_ID=-100xxxxxxxxxx
-```
-
-> ⚠️ `.env` fayli `.gitignore` orqali repoga tushmaydi — tokeningiz xavfsiz qoladi.
-> Botni GitHub'ga yuklashdan oldin tokenni hech qachon to'g'ridan-to'g'ri kodga yozmang.
-
-## Ishga tushirish
-
-```bash
-python main.py
-```
-
-Terminal osilib qolsa — bu normal holat, bot polling rejimida ishlamoqda.
-To'xtatish uchun `Ctrl + C` bosing.
-
-## Serverga (masalan VPS, Railway, Render) joylashda
-
-Deploy platformasining "Environment Variables" bo'limiga quyidagilarni qo'shing:
-
-- `BOT_TOKEN`
-- `GROUP_ID`
-
-Kod hech qanday o'zgarishsiz ishlayveradi.
-
-## Talablar
-
-- Python 3.9+
-- aiogram 3.15.0
-- python-dotenv 1.0.1
+- ⚠️ Bot tokeni endi kodning ichida ochiq turibdi. Agar bu loyihani **ochiq (public) GitHub repository**ga yuklasangiz, tokeningizni istalgan kishi ko'rib, botingizni o'zlashtirib olishi mumkin. Repository'ni **private** qiling yoki tokenni @BotFather orqali muntazam yangilab turing (`/revoke`).
+- Botni ishga tushirganda u avtomatik ravishda `GROUP_ID` to'g'riligini tekshiradi va natijasini terminalga chiqaradi — agar xatolik bo'lsa, sababi aniq yoziladi.
+- Bir vaqtning o'zida botni faqat **bitta joyda** (yoki faqat lokal, yoki faqat serverda) ishga tushiring — aks holda `TelegramConflictError` xatoligi chiqadi.
