@@ -297,7 +297,15 @@ async def send_to_group(message: types.Message, state: FSMContext):
         f"🆔 Username: @{message.from_user.username if message.from_user.username else 'mavjud emas'}"
     )
 
-    await bot.send_photo(GROUP_ID, data.get("photo"), caption=caption)
+    try:
+        await bot.send_photo(GROUP_ID, data.get("photo"), caption=caption)
+    except Exception as e:
+        print(f"[XATOLIK] Guruhga yuborishda xatolik: {e}")
+        await message.answer(
+            "❌ Anketani guruhga yuborishda xatolik yuz berdi. "
+            "Administratorga xabar bering."
+        )
+        return
 
     await message.answer(
         "✅ Anketangiz muvaffaqiyatli yuborildi. Rahmat!",
