@@ -68,6 +68,7 @@ class Form(StatesGroup):
     maktab = State()
     hozirgi_ish = State()
     oldingi_ish = State()
+    ozi_haqida = State()
     rasm = State()
     tayyor = State()
 
@@ -278,9 +279,22 @@ async def get_hozirgi_ish(message: types.Message, state: FSMContext) -> None:
 @dp.message(Form.oldingi_ish)
 async def get_oldingi_ish(message: types.Message, state: FSMContext) -> None:
     await state.update_data(oldingi_ish=message.text)
+    await state.set_state(Form.ozi_haqida)
+    await message.answer(
+        "16) Oʻzingiz haqingizda batafsil ma'lumot bering, oshxona soxasida nimalar qila "
+        "olishingiz bizga muxim..!"
+    )
+
+
+@dp.message(Form.ozi_haqida)
+async def get_ozi_haqida(message: types.Message, state: FSMContext) -> None:
+    if not message.text:
+        await message.answer("Iltimos, o'zingiz haqingizda matn ko'rinishida yozing.")
+        return
+    await state.update_data(ozi_haqida=message.text)
     await state.set_state(Form.rasm)
     await message.answer(
-        "16) O'zingiz tushgan selfie yoki shaxsingizni ifodalaydigan biror suratingizni yuboring..!\n\n"
+        "17) O'zingiz tushgan selfie yoki shaxsingizni ifodalaydigan biror suratingizni yuboring..!\n\n"
         "(HD bo'lishi shart, makiyaj va effektlar bilan yuborilgan suratlar anketa bekor bo'lishiga "
         "sabab bo'ladi..! Surat bizda maxfiy saqlanadi..!)"
     )
@@ -334,6 +348,7 @@ async def send_to_group(message: types.Message, state: FSMContext) -> None:
         f"13) Taxsil olgan maktab: {data.get('maktab')}\n"
         f"14) Hozirgi ish joyi: {data.get('hozirgi_ish')}\n"
         f"15) Oldingi ish joyi: {data.get('oldingi_ish')}\n"
+        f"16) O'zi haqida: {data.get('ozi_haqida')}\n"
         f"🆔 Username: @{username}"
     )
 
