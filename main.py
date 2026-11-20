@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import sys
 
 from aiogram import Bot, Dispatcher, F, types
@@ -28,18 +29,18 @@ log = logging.getLogger("muborak_bot")
 # --------------------------------------------------------------------------
 # Sozlamalar — bot tokeni va guruh ID'si shu yerda, to'g'ridan-to'g'ri yoziladi
 # --------------------------------------------------------------------------
-BOT_TOKEN = "8896346570:AAGOFPTPVfsRPi3T6aZFBefBVHktEigVDw4"
-GROUP_ID = -1004341899134
+BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
+GROUP_ID = os.getenv("GROUP_ID", "-1004341899134").strip()
 
 if not BOT_TOKEN:
-    log.error("BOT_TOKEN bo'sh! Yuqoridagi BOT_TOKEN qatoriga haqiqiy tokenni yozing.")
+    log.error("BOT_TOKEN topilmadi! Railway > Variables (yoki lokal muhit)ga BOT_TOKEN qo'shing.")
     sys.exit(1)
 
-if not GROUP_ID:
-    log.error("GROUP_ID bo'sh! Yuqoridagi GROUP_ID qatoriga guruh ID'sini yozing.")
+try:
+    GROUP_ID = int(GROUP_ID)
+except ValueError:
+    log.error("GROUP_ID noto'g'ri: %r. U butun son bo'lishi kerak (masalan -100...).", GROUP_ID)
     sys.exit(1)
-
-GROUP_ID = int(GROUP_ID)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
@@ -112,7 +113,6 @@ def boshladik_markup() -> ReplyKeyboardMarkup:
 
 
 def yuborish_markup() -> ReplyKeyboardMarkup:
-    print("ishlayapti.")
     return ReplyKeyboardMarkup(
         keyboard=[[KeyboardButton(text="✅ Yuborish")]],
         resize_keyboard=True,
@@ -302,7 +302,18 @@ async def get_ozi_haqida(message: types.Message, state: FSMContext) -> None:
 
 @dp.message(Form.rasm, F.photo)
 async def get_photo(message: types.Message, state: FSMContext) -> None:
-    await state.update_data(photo=message.photo[-1].file_id)
+    await state.update_data(photo=message.photo[-1].file_id, photo_is_document=False)
+    await state.set_state(Form.tayyor)
+    await message.answer(
+        "Barcha ma'lumotlar qabul qilindi. Yuborish uchun tugmani bosing:",
+        reply_markup=yuborish_markup(),
+    )
+
+
+@dp.message(Form.rasm, F.document.mime_type.startswith("image/"))
+async def get_photo_document(message: types.Message, state: FSMContext) -> None:
+    # HD surat fayl (document) sifatida yuborilganda ham qabul qilamiz
+    await state.update_data(photo=message.document.file_id, photo_is_document=True)
     await state.set_state(Form.tayyor)
     await message.answer(
         "Barcha ma'lumotlar qabul qilindi. Yuborish uchun tugmani bosing:",
@@ -353,7 +364,15 @@ async def send_to_group(message: types.Message, state: FSMContext) -> None:
     )
 
     try:
-        await bot.send_photo(GROUP_ID, photo_id, caption=caption)
+        # Rasm captioni 1024 belgidan oshmasligi kerak, shuning uchun rasmga qisqa sarlavha,
+        # to'liq anketa esa alohida xabar (limit 4096) sifatida yuboriladi.
+        short_caption = f"🆕 Yangi anketa! (\"SUSAMBIL\")\n{data.get('ism')}\n🆔 @{username}"[:1000]
+        if data.get("photo_is_document"):
+            await bot.send_document(GROUP_ID, photo_id, caption=short_caption)
+        else:
+            await bot.send_photo(GROUP_ID, photo_id, caption=short_caption)
+        for i in range(0, len(caption), 4000):
+            await bot.send_message(GROUP_ID, caption[i:i + 4000])
     except TelegramAPIError as e:
         log.error(
             "Guruhga yuborishda xatolik (GROUP_ID=%s): %s: %s",
